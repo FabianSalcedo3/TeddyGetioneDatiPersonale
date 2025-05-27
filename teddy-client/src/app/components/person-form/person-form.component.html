@@ -1,0 +1,176 @@
+<div class="container mt-4">
+  <!-- Loading Spinner -->
+  <div class="spinner-overlay" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Caricamento...</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-lg-8 offset-lg-2">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0">
+            {{ isEditing ? "Modifica" : "Nuova" }} Anagrafica
+          </h2>
+        </div>
+        <div class="card-body">
+          <form
+            [formGroup]="personForm"
+            (ngSubmit)="onSubmit()"
+            class="needs-validation"
+          >
+            <div class="row g-3">
+              <!-- Nome e Cognome -->
+              <div class="col-md-6">
+                <label for="firstName" class="form-label required">Nome</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="firstName"
+                  formControlName="firstName"
+                  [class.is-invalid]="
+                    submitted && personForm.get('firstName')?.invalid
+                  "
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="submitted && personForm.get('firstName')?.invalid"
+                >
+                  {{ getErrorMessage("firstName") }}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="lastName" class="form-label required"
+                  >Cognome</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="lastName"
+                  formControlName="lastName"
+                  [class.is-invalid]="
+                    submitted && personForm.get('lastName')?.invalid
+                  "
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="submitted && personForm.get('lastName')?.invalid"
+                >
+                  {{ getErrorMessage("lastName") }}
+                </div>
+              </div>
+
+              <!-- Indirizzo -->
+              <div class="col-12">
+                <label for="address" class="form-label">Indirizzo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="address"
+                  formControlName="address"
+                />
+              </div>
+
+              <!-- Località e Comune -->
+              <div class="col-md-6">
+                <label for="locality" class="form-label">Località</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="locality"
+                  formControlName="locality"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label for="city" class="form-label">Comune</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="city"
+                  formControlName="city"
+                />
+              </div>
+
+              <!-- Provincia ed Email -->
+              <div class="col-md-6">
+                <label for="province" class="form-label">Provincia</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="province"
+                  formControlName="province"
+                  maxlength="2"
+                  style="text-transform: uppercase"
+                  [class.is-invalid]="
+                    submitted && personForm.get('province')?.invalid
+                  "
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="submitted && personForm.get('province')?.invalid"
+                >
+                  {{ getErrorMessage("province") }}
+                </div>
+                <small class="text-muted">Es. MI, RM, TO</small>
+              </div>
+
+              <div class="col-md-6">
+                <label for="email" class="form-label required">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  formControlName="email"
+                  [class.is-invalid]="
+                    submitted && personForm.get('email')?.invalid
+                  "
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="submitted && personForm.get('email')?.invalid"
+                >
+                  {{ getErrorMessage("email") }}
+                </div>
+              </div>
+
+              <!-- Note -->
+              <div class="col-12">
+                <label for="notes" class="form-label">Note</label>
+                <textarea
+                  class="form-control"
+                  id="notes"
+                  formControlName="notes"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <!-- Pulsanti -->
+              <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  (click)="onCancel()"
+                  [disabled]="isLoading"
+                >
+                  <i class="bi bi-x-circle me-1"></i>
+                  Annulla
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isLoading"
+                >
+                  <i class="bi bi-check-circle me-1"></i>
+                  {{ isEditing ? "Salva Modifiche" : "Salva" }}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

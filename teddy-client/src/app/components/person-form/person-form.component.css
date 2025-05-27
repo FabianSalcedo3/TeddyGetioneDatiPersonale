@@ -1,0 +1,77 @@
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1.5rem 1.5rem 1rem;
+}
+
+.card-header h2 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Style for required fields */
+.form-label.required {
+    font-weight: 500;
+}
+
+/* Custom styling for form controls */
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-header {
+        padding: 1rem 1rem 0.75rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Transition for loading state */
+.spinner-overlay {
+    backdrop-filter: blur(2px);
+}
+
+/* Custom styling for buttons */
+.btn {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #565e64;
+}

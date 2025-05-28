@@ -52,6 +52,7 @@ export class PersonFormComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
+        console.error('Errore nel caricamento della persona:', error);
         this.isLoading = false;
         Swal.fire({
           title: 'Errore',
@@ -77,9 +78,8 @@ export class PersonFormComponent implements OnInit {
         : this.personService.createPerson(personData);
 
       saveOperation.subscribe({
-        next: (savedPerson) => {
+        next: () => {
           this.isLoading = false;
-          this.personService.setSelectedPerson(savedPerson);
           Swal.fire({
             title: 'Successo',
             text: `Record ${this.isEditing ? 'aggiornato' : 'creato'} con successo!`,

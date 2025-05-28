@@ -1,23 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Person } from '../../models/person.interface';
 import { PersonService } from '../../services/person.service';
 import Swal from 'sweetalert2';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-person-list',
   templateUrl: './person-list.component.html',
   styleUrls: ['./person-list.component.css']
 })
-export class PersonListComponent implements OnInit {
+export class PersonListComponent implements OnInit, OnDestroy {
+  destroy$ = new Subject<void>();
   people: Person[] = [];
-  filteredPersons: Person[] = [];
-  filters = {
-    firstName: '',
-    lastName: '',
-    city: '',
-    email: ''
-  };
+  filteredPeople: Person[] = [];
+  filter = '';
   sortField: keyof Person = 'lastName';
   sortDirection: 'asc' | 'desc' = 'asc';
   selectedPersonId: number | null = null;
@@ -29,22 +26,26 @@ export class PersonListComponent implements OnInit {
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-    this.loadPersons();
-    this.personService.selectedPerson$.subscribe(person => {
-      if (person) {
-        this.selectedPersonId = person.id || null;
-        this.scrollToSelectedPerson();
-      }
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  loadPersons(): void {
+  ngOnInit(): void {
+    this.loadPeople();
+    this.personService.getLastEditedId().pipe(takeUntil(this.destroy$)).subscribe(id => {
+      if (id !== null) {
+        this.selectedPersonId = id;
+      }
+    })
+  }
+
+  loadPeople(): void {
     // this.isLoading = true;
-    this.personService.getPersons().subscribe({
+    this.personService.getPeople().subscribe({
       next: (data) => {
         this.people = data;
-        this.applyFilters();
+        this.applyFilter();
         this.isLoading = false;
       },
       error: (error) => {
@@ -63,18 +64,27 @@ export class PersonListComponent implements OnInit {
     });
   }
 
-  applyFilters(): void {
-    this.filteredPersons = this.people.filter(person => {
-      return (!this.filters.firstName || person.firstName.toLowerCase().includes(this.filters.firstName.toLowerCase())) &&
-        (!this.filters.lastName || person.lastName.toLowerCase().includes(this.filters.lastName.toLowerCase())) &&
-        (!this.filters.city || person.city?.toLowerCase().includes(this.filters.city.toLowerCase())) &&
-        (!this.filters.email || person.email.toLowerCase().includes(this.filters.email.toLowerCase()));
+  // Questo algoritmo consente di filtrare i dati in base al campo di ricerca con la particolarità di essere scalabile (funziona anche con campi aggiuntivi)
+  applyFilter(): void {
+    this.filteredPeople = this.people.filter(person => {
+      if (this.filter.trim() === '') {
+        return true; // Non applico filtri se il campo di ricerca è vuoto
+      } else {
+        for (const key in person) {
+          const value = person[key as keyof Person]?.toString().toLowerCase().trim();
+          const filterValue = this.filter.toLowerCase().trim();
+          if (value && value.includes(filterValue)) {
+            return true;
+          }
+        }
+      }
+      return false; // Nessun campo corrisponde al filtro
     });
     this.sortData();
   }
 
   sortData(): void {
-    this.filteredPersons.sort((a, b) => {
+    this.filteredPeople.sort((a, b) => {
       const aValue = (a[this.sortField] || '').toString().toLowerCase();
       const bValue = (b[this.sortField] || '').toString().toLowerCase();
       if (aValue === bValue) return 0;
@@ -112,7 +122,7 @@ export class PersonListComponent implements OnInit {
         this.personService.deletePerson(person.id).subscribe({
           next: () => {
             this.isLoading = false;
-            this.loadPersons();
+            this.loadPeople();
             Swal.fire('Eliminato!', 'Il record è stato eliminato.', 'success');
           },
           error: (error) => {
@@ -126,12 +136,5 @@ export class PersonListComponent implements OnInit {
 
   onNew(): void {
     this.router.navigate(['/new']);
-  }
-
-  private scrollToSelectedPerson(): void {
-    const selectedRow = document.querySelector('.table-info');
-    if (selectedRow) {
-      selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
   }
 }
